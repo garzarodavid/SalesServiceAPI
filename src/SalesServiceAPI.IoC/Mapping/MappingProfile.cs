@@ -12,6 +12,8 @@ public class MappingProfile : Profile
         // Mapeamento de ItemVenda
         CreateMap<ItemVenda, ItemVendaDTO>()
             .ForMember(dest => dest.ProdutoNome, opt => opt.MapFrom(src => src.Produto.Nome))
+            .ForMember(dest => dest.Desconto, opt => opt.MapFrom(src => src.Desconto)) 
+            .ForMember(dest => dest.ValorTotal, opt => opt.MapFrom(src => src.ValorTotal)) 
             .ReverseMap();
 
         // Mapeamento de Produto
@@ -20,7 +22,10 @@ public class MappingProfile : Profile
         // Mapeamento de Venda
         CreateMap<Venda, VendaDTO>()
             .ForMember(dest => dest.ClienteNome, opt => opt.MapFrom(src => src.Cliente.Nome))
+            .ForMember(dest => dest.ClienteEmail, opt => opt.MapFrom(src => src.Cliente.Email)) 
             .ForMember(dest => dest.FilialNome, opt => opt.MapFrom(src => src.Filial.Nome))
+            .ForMember(dest => dest.FilialEndereco, opt => opt.MapFrom(src => src.Filial.Endereco))
+            .ForMember(dest => dest.Itens, opt => opt.MapFrom(src => src.Itens)) 
             .ReverseMap();
 
         // Mapeamento de Filial

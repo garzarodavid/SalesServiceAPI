@@ -1,6 +1,7 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using SalesServiceAPI.Application.DTOs;
 using SalesServiceAPI.Application.Interfaces.Services;
+using SalesServiceAPI.Domain.Entities;
 
 namespace SalesServiceAPI.Api.Controllers;
 
@@ -25,6 +26,10 @@ public class VendaController : ControllerBase
     public async Task<IActionResult> GetAllVendas()
     {
         var vendas = await _vendaService.GetAllVendasAsync();
+        if (vendas?.Count() == 0 || vendas == null)
+        {
+            return NotFound();
+        }
         return Ok(vendas);
     }
 

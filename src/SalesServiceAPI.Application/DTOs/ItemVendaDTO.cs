@@ -45,5 +45,5 @@ public class ItemVendaDTO
     /// Valor Total do Item de Venda (Quantidade * (ValorUnitário - Desconto)).
     /// </summary>
     /// <example>90.00</example>
-    public decimal ValorTotal { get; set; }
+    public decimal ValorTotal => Quantidade * (ValorUnitario - Desconto); // Certifique-se de que o valor total é calculado corretamente
 }

@@ -30,6 +30,12 @@ public class VendaDTO
     public string ClienteNome { get; set; }
 
     /// <summary>
+    /// E-mail do Cliente.
+    /// </summary>
+    /// <example>joao.silva@teste.com</example>
+    public string ClienteEmail { get; set; }
+
+    /// <summary>
     /// Valor Total da Venda.
     /// </summary>
     /// <example>100.00</example>
@@ -57,4 +63,10 @@ public class VendaDTO
     /// </summary>
     /// <example>Filial Central</example>
     public string FilialNome { get; set; }
+
+    /// <summary>
+    /// Endereço da Filial.
+    /// </summary>
+    /// <example>Rua A, nº 123, Centro, São Paulo - SP, CEP 12345-123</example>
+    public string FilialEndereco { get; set; }
 }

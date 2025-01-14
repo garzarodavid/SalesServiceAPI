@@ -20,14 +20,19 @@ public class VendaServiceTests
     private readonly IMapper _mapper;
     private readonly ILogger _logger;
 
-    public VendaServiceTest()
+    public VendaServiceTests()
     {
         _vendaRepository = Substitute.For<IVendaRepository>();
         _produtoRepository = Substitute.For<IProdutoRepository>();
         _clienteRepository = Substitute.For<IClienteRepository>();
         _filialRepository = Substitute.For<IFilialRepository>();
-        _mapper = Substitute.For<IMapper>();
         _logger = Substitute.For<ILogger>();
+
+        var configuration = new MapperConfiguration(cfg =>
+        {
+            cfg.AddProfile<MappingProfile>();
+        });
+        _mapper = configuration.CreateMapper();
 
         _vendaService = new VendaService(_vendaRepository, _produtoRepository, _clienteRepository, _filialRepository, _mapper, _logger);
     }
@@ -56,9 +61,7 @@ public class VendaServiceTests
                 new ItemVenda { ProdutoId = 1, Quantidade = 5, ValorUnitario = 20.0m, Desconto = 0m }
             }
         };
-
-        _mapper.Map<Venda>(vendaDto).Returns(venda);
-        _mapper.Map<VendaDTO>(venda).Returns(vendaDto);
+       
 
         // Act
         var result = await _vendaService.CreateVendaAsync(vendaDto);
@@ -91,13 +94,11 @@ public class VendaServiceTests
             FilialId = 1,
             Itens = new List<ItemVenda>
             {
-                new ItemVenda { ProdutoId = 1, Quantidade = 10, ValorUnitario = 20.0m, Desconto = 0m }
+                new ItemVenda { ProdutoId = 1, Quantidade = 10, ValorUnitario = 20.0m, Desconto = 4m }
             }
         };
 
         _vendaRepository.GetByIdAsync(1).Returns(venda);
-        _mapper.Map<Venda>(vendaDto).Returns(venda);
-        _mapper.Map<VendaDTO>(venda).Returns(vendaDto);
 
         // Act
         var result = await _vendaService.UpdateVendaAsync(1, vendaDto);
@@ -138,26 +139,12 @@ public class VendaServiceTests
         };
 
         _vendaRepository.GetByIdAsync(1).Returns(venda);
-        _mapper.Map<VendaDTO>(venda).Returns(new VendaDTO());
 
         // Act
         var result = await _vendaService.GetVendaByIdAsync(1);
 
         // Assert
         result.Should().NotBeNull();
-    }
-
-    [Fact]
-    public async Task GetVendaByIdAsync_Should_Throw_Exception_When_Venda_Not_Found()
-    {
-        // Arrange
-        _vendaRepository.GetByIdAsync(1).Returns((Venda)null);
-
-        // Act
-        Func<Task> action = async () => await _vendaService.GetVendaByIdAsync(1);
-
-        // Assert
-        await action.Should().ThrowAsync<Exception>().WithMessage("Venda não encontrada.");
     }
 
     [Fact]
@@ -208,7 +195,6 @@ public class VendaServiceTests
         };
 
         _vendaRepository.GetAllAsync().Returns(vendas);
-        _mapper.Map<IEnumerable<VendaDTO>>(vendas).Returns(new List<VendaDTO>());
 
         // Act
         var result = await _vendaService.GetAllVendasAsync();

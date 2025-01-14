@@ -34,6 +34,24 @@ namespace SalesServiceAPI.Application.Services
 
         public async Task<VendaDTO> CreateVendaAsync(VendaDTO vendaDto)
         {
+            // Verificar se o cliente existe pelo e-mail
+            var cliente = await _clienteRepository.GetByEmailAsync(vendaDto.ClienteEmail);
+            if (cliente == null)
+            {
+                cliente = new Cliente { Nome = vendaDto.ClienteNome, Email = vendaDto.ClienteEmail };
+                await _clienteRepository.AddAsync(cliente);
+            }
+            vendaDto.ClienteId = cliente.Id;
+
+            // Verificar se a filial existe pelo nome
+            var filial = await _filialRepository.GetByNameAsync(vendaDto.FilialNome);
+            if (filial == null)
+            {
+                filial = new Filial { Nome = vendaDto.FilialNome, Endereco = vendaDto.FilialEndereco };
+                await _filialRepository.AddAsync(filial);
+            }
+            vendaDto.FilialId = filial.Id;
+
             // Mapear DTO para entidade
             var venda = _mapper.Map<Venda>(vendaDto);
 
@@ -81,6 +99,24 @@ namespace SalesServiceAPI.Application.Services
                 throw new Exception("Venda não encontrada.");
             }
 
+            // Verificar se o cliente existe pelo e-mail
+            var cliente = await _clienteRepository.GetByEmailAsync(vendaDto.ClienteEmail);
+            if (cliente == null)
+            {
+                cliente = new Cliente { Nome = vendaDto.ClienteNome, Email = vendaDto.ClienteEmail };
+                await _clienteRepository.AddAsync(cliente);
+            }
+            vendaDto.ClienteId = cliente.Id;
+
+            // Verificar se a filial existe pelo nome
+            var filial = await _filialRepository.GetByNameAsync(vendaDto.FilialNome);
+            if (filial == null)
+            {
+                filial = new Filial { Nome = vendaDto.FilialNome, Endereco = vendaDto.FilialEndereco };
+                await _filialRepository.AddAsync(filial);
+            }
+            vendaDto.FilialId = filial.Id;
+
             var venda = _mapper.Map<Venda>(vendaDto);
 
             // Validar e aplicar regras de negócios
@@ -118,6 +154,7 @@ namespace SalesServiceAPI.Application.Services
             return vendaAtualizada;
         }
 
+
         public async Task<bool> DeleteVendaAsync(int id)
         {
             var venda = await _vendaRepository.GetByIdAsync(id);
@@ -137,11 +174,7 @@ namespace SalesServiceAPI.Application.Services
         public async Task<VendaDTO> GetVendaByIdAsync(int id)
         {
             var venda = await _vendaRepository.GetByIdAsync(id);
-            if (venda == null)
-            {
-                throw new Exception("Venda não encontrada.");
-            }
-
+           
             var vendaDto = _mapper.Map<VendaDTO>(venda);
             return vendaDto;
         }

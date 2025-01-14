@@ -1,4 +1,5 @@
-﻿using SalesServiceAPI.Domain.Entities;
+﻿using Microsoft.EntityFrameworkCore;
+using SalesServiceAPI.Domain.Entities;
 using SalesServiceAPI.Domain.Repositories;
 using SalesServiceAPI.Infrastructure.Data.Context;
 
@@ -11,7 +12,9 @@ public class FilialRepository : GenericRepository<Filial>, IFilialRepository
     public FilialRepository(ApplicationDbContext context) : base(context)
     {
     }
-
-    // Implemente métodos específicos de Filial, se necessário
+    public async Task<Filial?> GetByNameAsync(string name)
+    {
+        return await _context.Set<Filial>().FirstOrDefaultAsync(f => f.Nome == name);
+    }
 }
 
